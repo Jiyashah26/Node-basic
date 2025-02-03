@@ -10,7 +10,7 @@ app.use(cors());
 const mongoURI = "mongodb://localhost:27017/Basic"; // Replace with your MongoDB URI
 mongoose
   .connect(mongoURI)
-  .then(() => console.log("Connected to MongoDB"))
+  .then(() => console.log("Connected to MongoDB")) //(then sucess ke liye use krte hai)
   .catch((err) => console.error("Error connecting to MongoDB:", err));
 
 // Define a Mongoose schema and model
@@ -135,7 +135,8 @@ app.get("/home", (req, res) => {
 
 app.get("/profiles", async (req, res) => {
   const profiles = await Profile.find(); // Fetch all profiles from MongoDB
-  res.status(200).json(profiles);
+  res.status(200).send(profiles.length !== 0 ? profiles: []);
+  console.log(profiles);
 });
 
 app.get("/profile/:id", async (req, res) => {
@@ -155,13 +156,13 @@ app.post("/profileCreate/", async (req, res) => {
   const newProfile = new Profile(profile);
   await newProfile.save();
   const profiles = await Profile.find();
-  res.status(200).json(profiles);
+  res.status(200).json(profiles);  //(json.pars )
 });
 
 app.put("/profileEdit/", async (req, res) => {
   const profile = req.body;
-  const result = await Profile.updateOne({ id: profile.id }, { $set: profile });
-  if (result.matchedcount === 0) res.status(404).send("Not found");
+  const result = await Profile.updateOne({ id: profile.id }, { $set: profile }); //(updateOne ka parameter set krtahai $dollar ka sign)
+  if (result.matchedcount === 0) res.status(404).send("Not found"); 
 
   const profiles = await Profile.find();
   res.status(200).json(profiles);
